@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>班级说说</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/jumbotron.css"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <style>
+        h1.title img{
+            width:100px;height:100px;
+        }
+        .avatarTX{
+            width:50px;height:50px;
+        }
+    </style>
+</head>
+
+<body>
+<%include header.ejs%>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+    <% if(!login){%>
+    <!--没有登录要显示登录提示-->
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-6">
+                <h1>
+                    欢迎！
+                </h1>
+                <p>我的微博，仅仅测试！欢迎注册！
+                    <a href="/regist" class="btn btn-success">注册</a>
+                </p>
+            </div>
+            <div class="col-xs-6">
+                <form>
+                    <h1>欢迎登录！</h1>
+                    <div class="form-group">
+                        <label for="uName">用户名</label>
+                        <input type="text" class="form-control" id="uName" name="uName" placeholder="可以是中文，不允许与别人重复">
+                    </div>
+                    <div class="form-group">
+                        <label for="uPwd">密码：</label>
+                        <input type="password" class="form-control" id="uPwd" name="uPwd" placeholder="请输入密码">
+                    </div>
+                    <button type="button" id="login" class="btn btn-success">登录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <% }else{%>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3">
+                <h1 class="title">
+                    <a href="/setavatar"><img src="/avatar/<%=avatar%>" alt="11"/></a>
+                </h1>
+            </div>
+            <div class="col-xs-9">
+                <p><%=username%></p>
+                <textarea name="neirong" id="neirong" cols="80" rows="4"></textarea><br/>
+                <button id="fbss" class="btn btn-success">发表说说</button>
+            </div>
+        </div>
+    </div>
+    <% } %>
+</div>
+
+<div class="container">
+    <!-- Example row of columns -->
+    <div class="row" id="quanbushuoshuo">
+        <div class="col-md-4" style="min-height:200px;">
+            <h2><img src="./avatar/" alt="111" class="avatarTX"/>说：</h2>
+            <p></p>
+            <p><a class="btn btn-default" href="#" role="button">查看详情&raquo;</a></p>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination fyQ">
+            <li><a>1</a></li>
+            <li><a>2</a></li>
+            <li><a>3</a></li>
+            <li><a>4</a></li>
+            <li><a>5</a></li>
+        </ul>
+    </nav>
+
+
+    <hr>
+
+    <footer>
+        <p>&copy; 2016 Company, Inc.</p>
+    </footer>
+</div>
+
+
+
+
+
+<script>
+    $('#login').click(function(){
+        $.ajax({
+            type:'post',
+            url:'/dologin',
+            data:{
+                "username":$("#uName").val(),
+                "userpwd":$("#uPwd").val()
+            },
+            success:function(data){
+                if(data=='1'){
+                    alert("登录成功");
+                    setTimeout(function(){
+                        window.location.href="/";
+                    },2000);
+                }else if(data=='-1'){
+                    alert("用户名不存在");
+                }else if(data=='-2'){
+                    alert("密码错误");
+                }
+            },
+            error:function(){
+                alert("数据库连接失败");
+            }
+        })
+    })
+</script>
+
+<script>
+    //发表说说
+    $("#fbss").click(function(){
+        $.ajax({
+            type:'post',
+            url:'/post',
+            data:{
+                "content":$("#neirong").val()
+            },
+            success:function(data){
+                if(data=='1'){
+                    alert("发表成功！");
+                    setTimeout(function(){
+                        window.location.href="/";
+                    },2000);
+                }else if(data=='-3'){
+                    alert("发表失败");
+                }
+            },
+            error:function(){
+                alert("数据库连接失败");
+            }
+        })
+    })
+</script>
+<script>
+    getData(0);
+    $(".fyQ li:first-child").addClass("active");
+    $(".fyQ li").click(function(){
+        $(this).addClass("active").siblings("li").removeClass("active");
+        var page=parseInt($(this).children("a").html())-1;
+        getData(page);
+    });
+
+    function getData(page){
+        //请求出来数据，布局到说说列表中
+        $.ajax({
+            type:"get",
+            url:"/getAllShuoshuo?page="+page,
+            success:function(data){
+                data=JSON.parse(data);
+                var html="";
+                for(var i=0;i<data.r.length;i++){
+                    var avatarQ="";
+                    $.ajax({
+                        async:false,
+                        type:"get",
+                        url:"getUserInfo?username="+data.r[i].username,
+                        success:function(result){
+                            console.log("---------------------------------");
+                            result=JSON.parse(result);
+                            console.log(result.r[0].avatar);
+                            avatarQ=result.r[0].avatar;
+                        },
+                        error:function(){
+                            console.log("头像请求失败！");
+                        }
+                    });
+                    console.log("***********************");
+                    console.log(avatarQ);
+                    console.log(data.r[i]);
+                    html +=`
+                    <div class="col-md-4" style="min-height:250px;">
+                        <h2><img src="./avatar/${ avatarQ }" alt="111" class="avatarTX"/>${data.r[i].username}说：</h2>
+                        <p>${data.r[i].content}</p>
+                        <p>${data.r[i].datetime}</p>
+                        <p><a class="btn btn-default" href="#" role="button">查看详情&raquo;</a></p>
+                    </div>
+                `;
+                }
+                $("#quanbushuoshuo").html(html);
+            },
+            error:function(){
+                console.log("aaaa");
+            }
+        })
+    }
+
+
+</script>
+
+</body>
+</html>

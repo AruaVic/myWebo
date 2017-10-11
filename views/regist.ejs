@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>注册 - 班级说说</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/jumbotron.css"/>
+</head>
+
+<body>
+
+<%include header.ejs%>
+
+<div class="jumbotron">
+    <div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+        <form>
+            <h1>欢迎注册！</h1>
+            <div class="form-group">
+                <label for="uName">用户名</label>
+                <input type="text" class="form-control" id="uName" name="uName" placeholder="可以是中文，不允许与别人重复">
+            </div>
+            <div class="form-group">
+                <label for="uPwd">Password</label>
+                <input type="password" class="form-control" id="uPwd" name="uPwd" placeholder="请输入密码">
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"> 我遵循注册规定
+                </label>
+            </div>
+            <button type="button" id="zhuce" class="btn btn-success">注册</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; 2016 Company, Inc.</p>
+    </footer>
+</div>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script>
+    $('#zhuce').click(function(){
+        $.ajax({
+            type:'post',
+            url:'/doregist',
+            data:{
+                "username":$("#uName").val(),
+                "userpwd":$("#uPwd").val()
+            },
+            success:function(data){
+                if(data=='1'){
+                    alert("注册成功");
+                    setTimeout(function(){
+                        window.location.href="/";
+                    },2000);
+                }else if(data=='-1'){
+                    alert("用户名被占用");
+                }
+            },
+            error:function(){
+                alert("注册失败");
+            }
+        })
+    })
+
+
+</script>
+</body>
+</html>

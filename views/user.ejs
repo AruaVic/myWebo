@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title><%= user%>的说说 - 班级说说</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/jumbotron.css"/>
+</head>
+
+<body>
+<%include header.ejs%>
+
+
+<div class="jumbotron">
+    <div class="container">
+    <!-- Example row of columns -->
+        <h1><img style="width:100px;height:100px;border-radius: 50%;" src="/avatar/<%=cirentouxiang%>" alt=""/><%= user%>的个人主页</h1>
+        <div class="row">
+            <div class="row col-lg-12">
+                <%for(var i=0;i<cirenshuoshuo.length;i++){%>
+                <div style="border-bottom: 1px solid #ccc;">
+                    <p class="text-danger"><%=cirenshuoshuo[i].content%></p>
+                    <p class="text-info"><%=cirenshuoshuo[i].datetime%></p>
+                </div>
+
+                <%}%>
+            </div>
+        </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; 2016 Company, Inc.</p>
+    </footer>
+</div>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script>
+
+</script>
+</body>
+</html>
